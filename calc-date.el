@@ -20,17 +20,24 @@
 (defun parse-script-options ()
   "Return a PLIST with valid script options"
 
+  ;;
   ;; Turn the command line args into a plist...
-  (let ((opts (mapcar (lambda (opt)
-			(cond ((equal opt "--add-days")  :add-days)
-			      ((equal opt "--base-date") :base-date)
-			      (t opt)))
-		      command-line-args-left)))
+  ;;
+  (let ((opts '(:base-date nil :add-days nil)))
+
+    ;; The logic assumes a value follows each flag, example: --da-flag da-value
+    (let ((flag nil))
+      (mapcar (lambda (opt)
+		(cond ((equal opt "--add-days")  (setq flag :add-days))
+		      ((equal opt "--base-date") (setq flag :base-date))
+		      (t (plist-put opts flag opt))))
+	      command-line-args-left))
     
     ;; Try to parse the argument for :add-days
-    (plist-put opts
-	       :add-days
-	       (string-to-number (plist-get opts :add-days)))
+    (let ((add-days (plist-get opts :add-days)))
+      (plist-put opts
+		 :add-days
+		 (if add-days (string-to-number add-days) nil)))
 
     ;; Try to parse the argument for :base-date
     (let ((base-date (plist-get opts :base-date)))
@@ -44,8 +51,9 @@
 ;;; Script starts here
 ;;;
 
-(let ((days (plist-get (parse-script-options) :add-days))
-      (base-date (plist-get (parse-script-options) :base-date)))
+(let* ((options (parse-script-options))
+       (days (plist-get options :add-days))
+       (base-date (plist-get options :base-date)))
   (when (not days)
     ;; Exit with an error and notify the user about proper usage 
     (send-string-to-terminal "Usage: calc-date.el --add-days DAYS\n")
