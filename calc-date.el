@@ -30,7 +30,10 @@
     (while (prog1
 	       (setq l (pop cmd-opts))
 	     (setq r (pop cmd-opts)))
-      (cond ((eq l :add-days)
+      (cond ((symbolp r) ; The r value should NOT be a symbol...
+	     (push nil opts) ; Skipping...
+	     (push l opts)) 
+	    ((eq l :add-days)
 	     (push (if r (string-to-number r)) opts)
 	     (push l opts))
 	    ((eq l :base-date)
