@@ -21,19 +21,19 @@
   "Return a PLIST with valid script options"
   (let ((cmd-opts (copy-tree command-line-args-left))
 	(opts nil)
-	l r) ; left right
+	l r) ; left: flag, right: value
     ;; Process command line arguments...
     (while (progn (setq l (pop cmd-opts))
 		  (setq r (pop cmd-opts))
 		  l)
       (cond ((equal l "--add-days")
-	     (push :add-days opts)
-	     (push (string-to-number r) opts))
+	     (push (string-to-number r) opts)
+	     (push :add-days opts))
 	    ((equal l "--base-date")
-	     (push :base-date opts)
-	     (push (if r (date-to-time r)) opts))
-	    (t (push r cmd-opts)))) ; Return r to check if it is a flag
-    (reverse opts)))
+	     (push (if r (date-to-time r)) opts)
+	     (push :base-date opts))
+	    (t (push r cmd-opts)))) ; Return r and check if it is a flag
+    opts))
 
 (defun get-script-configuration ()
   (let* ((opts (parse-command-line-arguments))
