@@ -27,7 +27,7 @@
 		  (setq r (pop cmd-opts))
 		  l)
       (cond ((equal l "--add-days")
-	     (push (string-to-number r) opts)
+	     (push (if r (string-to-number r)) opts)
 	     (push :add-days opts))
 	    ((equal l "--base-date")
 	     (push (if r (date-to-time r)) opts)
