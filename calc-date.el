@@ -19,33 +19,26 @@
 
 (defun parse-script-options ()
   "Return a PLIST with valid script options"
-
-  ;;
-  ;; Turn the command line args into a plist...
-  ;;
-  (let ((opts '(:base-date nil :add-days nil)))
-
-    ;; The logic assumes a value follows each flag, example: --da-flag da-value
-    (let ((flag nil))
-      (mapcar (lambda (opt)
-		(cond ((equal opt "--add-days")  (setq flag :add-days))
-		      ((equal opt "--base-date") (setq flag :base-date))
-		      (t (plist-put opts flag opt))))
-	      command-line-args-left))
+  (let ((cmd-opts (copy-tree command-line-args-left))
+	(opts nil)
+	l r) ; left right
+    ;; Process command line arguments...
+    (while (progn (setq l (pop cmd-opts))
+		  (setq r (pop cmd-opts))
+		  l)
+      (cond ((equal l "--add-days")
+	     (push :add-days opts)
+	     (push (string-to-number r) opts))
+	    ((equal l "--base-date")
+	     (push :base-date opts)
+	     (push (if r (date-to-time r)) opts))
+	    (t (push r cmd-opts)))) ; Return r to check if it is a flag
+    (setq opts (reverse opts))
     
-    ;; Try to parse the argument for :add-days
-    (let ((add-days (plist-get opts :add-days)))
-      (plist-put opts
-		 :add-days
-		 (if add-days (string-to-number add-days) nil)))
-
-    ;; Try to parse the argument for :base-date
-    (let ((base-date (plist-get opts :base-date)))
-      (plist-put opts
-		 :base-date
-		 (if base-date (date-to-time base-date) (current-time))))
-
-    opts))
+    ;; Set required args as needed...
+    (let ((base (plist-get opts :base-date)))
+      (plist-put opts :base-date (or base (current-time))))
+    ))
 
 ;;;
 ;;; Script starts here
