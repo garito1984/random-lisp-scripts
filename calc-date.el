@@ -19,18 +19,22 @@
 
 (defun parse-command-line-arguments ()
   "Return a PLIST with valid script options"
-  (let ((cmd-opts (copy-tree command-line-args-left))
+  (let ((cmd-opts (mapcar (lambda (opt)
+			    (cond ((equal opt "--add-days") :add-days)
+				  ((equal opt "--base-date") :base-date)
+				  (t opt)))
+			  command-line-args-left))
 	(opts nil)
 	l r) ; left: flag, right: value
     ;; Process command line arguments...
     (while (prog1 (setq l (pop cmd-opts))
-		  (setq r (pop cmd-opts)))
-      (cond ((equal l "--add-days")
+	     (setq r (pop cmd-opts)))
+      (cond ((eq l :add-days)
 	     (push (if r (string-to-number r)) opts)
-	     (push :add-days opts))
-	    ((equal l "--base-date")
+	     (push l opts))
+	    ((eq l :base-date)
 	     (push (if r (date-to-time r)) opts)
-	     (push :base-date opts))
+	     (push l opts))
 	    (t (push r cmd-opts)))) ; Since l wasn't a flag push r back
     opts))
 
