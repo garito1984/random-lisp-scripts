@@ -17,7 +17,7 @@
 	    (format-time-string "%+4Y-%m-%d becomes " past-date)
 	    (format-time-string "%A, %B %-e, %Y.\n" future-date))))
 
-(defun parse-script-options ()
+(defun parse-command-line-arguments ()
   "Return a PLIST with valid script options"
   (let ((cmd-opts (copy-tree command-line-args-left))
 	(opts nil)
@@ -33,18 +33,18 @@
 	     (push :base-date opts)
 	     (push (if r (date-to-time r)) opts))
 	    (t (push r cmd-opts)))) ; Return r to check if it is a flag
-    (setq opts (reverse opts))
-    
-    ;; Set required args as needed...
-    (let ((base (plist-get opts :base-date)))
-      (plist-put opts :base-date (or base (current-time))))
-    ))
+    (reverse opts)))
+
+(defun get-script-configuration ()
+  (let* ((opts (parse-command-line-arguments))
+	 (base (plist-get opts :base-date)))
+    (plist-put opts :base-date (or base (current-time)))))
 
 ;;;
 ;;; Script starts here
 ;;;
 
-(let* ((options (parse-script-options))
+(let* ((options (get-script-configuration))
        (days (plist-get options :add-days))
        (base-date (plist-get options :base-date)))
   (when (not days)
