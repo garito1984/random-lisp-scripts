@@ -32,7 +32,7 @@
 	    ((equal l "--base-date")
 	     (push (if r (date-to-time r)) opts)
 	     (push :base-date opts))
-	    (t (push r cmd-opts)))) ; Push r back to check if it is a flag
+	    (t (push r cmd-opts)))) ; Since l wasn't a flag push r back
     opts))
 
 (defun get-script-configuration ()
