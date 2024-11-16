@@ -27,7 +27,8 @@
 	(opts nil)
 	l r) ; left: flag, right: value
     ;; Process command line arguments...
-    (while (prog1 (setq l (pop cmd-opts))
+    (while (prog1
+	       (setq l (pop cmd-opts))
 	     (setq r (pop cmd-opts)))
       (cond ((eq l :add-days)
 	     (push (if r (string-to-number r)) opts)
