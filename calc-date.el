@@ -1,8 +1,34 @@
 #!/usr/bin/emacs -x
 
 ;;;
-;;; Function declarations
+;;; Declarations
 ;;;
+
+(setq script-flags '("--add-days"  :add-days
+		     "--base-date" :base-date))
+
+(setq handle-flag-values
+      '(:add-days  (lambda (val) (if val (string-to-number val)))
+	:base-date (lambda (val) (if val (date-to-time val)))))
+
+(defun parse-command-line-arguments ()
+  "Return a PLIST from the script's command line arguments"
+  (let ((cmd-opts (mapcar (lambda (opt)
+			    (cond ((plist-get script-flags opt 'equal))
+				  (t opt)))
+			  command-line-args-left))
+	(opts nil)
+	l r) ; left: flag, right: value
+    ;; Process command line arguments...
+    (while (prog1
+	       (setq l (pop cmd-opts))
+	     (setq r (pop cmd-opts)))
+      (cond ((and (symbolp l) (symbolp r))) ; Consecutive flags, skipping...
+	    ((symbolp l)
+	     (push (funcall (plist-get handle-flag-values l) r) opts)
+	     (push l opts))
+	    (t (push r cmd-opts)))) ; Since l wasn't a flag push r back
+    opts))
 
 (defun days-in-seconds (days)
   "Return a DAYS number of seconds"
@@ -16,29 +42,6 @@
     (concat (format "Adding %d days to " days)
 	    (format-time-string "%+4Y-%m-%d becomes " past-date)
 	    (format-time-string "%A, %B %-e, %Y.\n" future-date))))
-
-(defun parse-command-line-arguments ()
-  "Return a PLIST from the script's command line arguments"
-  (let ((cmd-opts (mapcar (lambda (opt)
-			    (cond ((equal opt "--add-days") :add-days)
-				  ((equal opt "--base-date") :base-date)
-				  (t opt)))
-			  command-line-args-left))
-	(opts nil)
-	l r) ; left: flag, right: value
-    ;; Process command line arguments...
-    (while (prog1
-	       (setq l (pop cmd-opts))
-	     (setq r (pop cmd-opts)))
-      (cond ((and (symbolp l) (symbolp r))) ; Consecutive flags, skipping...
-	    ((eq l :add-days)
-	     (push (if r (string-to-number r)) opts)
-	     (push l opts))
-	    ((eq l :base-date)
-	     (push (if r (date-to-time r)) opts)
-	     (push l opts))
-	    (t (push r cmd-opts)))) ; Since l wasn't a flag push r back
-    opts))
 
 ;;;
 ;;; Script starts here
