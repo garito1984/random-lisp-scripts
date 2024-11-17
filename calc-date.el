@@ -18,7 +18,7 @@
 	    (format-time-string "%A, %B %-e, %Y.\n" future-date))))
 
 (defun parse-command-line-arguments ()
-  "Return a PLIST with valid script options"
+  "Return a PLIST from the script's command line arguments"
   (let ((cmd-opts (mapcar (lambda (opt)
 			    (cond ((equal opt "--add-days") :add-days)
 				  ((equal opt "--base-date") :base-date)
@@ -30,9 +30,7 @@
     (while (prog1
 	       (setq l (pop cmd-opts))
 	     (setq r (pop cmd-opts)))
-      (cond ((symbolp r) ; The r value should NOT be a symbol...
-	     (push nil opts) ; Skipping...
-	     (push l opts)) 
+      (cond ((and (symbolp l) (symbolp r))) ; Consecutive flags, skipping...
 	    ((eq l :add-days)
 	     (push (if r (string-to-number r)) opts)
 	     (push l opts))
@@ -42,16 +40,11 @@
 	    (t (push r cmd-opts)))) ; Since l wasn't a flag push r back
     opts))
 
-(defun get-script-configuration ()
-  (let* ((opts (parse-command-line-arguments))
-	 (base (plist-get opts :base-date)))
-    (plist-put opts :base-date (or base (current-time)))))
-
 ;;;
 ;;; Script starts here
 ;;;
 
-(let* ((options (get-script-configuration))
+(let* ((options (parse-command-line-arguments))
        (days (plist-get options :add-days))
        (base-date (plist-get options :base-date)))
   (when (not days)
