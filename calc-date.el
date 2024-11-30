@@ -16,17 +16,16 @@
   (let ((cmd-opts (mapcar (lambda (opt)
 			    (or (plist-get script-flags opt 'equal) opt))
 			  command-line-args-left))
-	(opts nil)
-	l r) ; left: flag, right: value
+	(opts nil))
     ;; Process command line arguments...
-    (while (prog1
-	       (setq l (pop cmd-opts))
-	     (setq r (pop cmd-opts)))
-      (cond ((and (symbolp l) (symbolp r))) ; Consecutive flags, skipping...
-	    ((symbolp l)
-	     (push (funcall (plist-get handle-flag-values l) r) opts)
-	     (push l opts))
-	    (t (push r cmd-opts)))) ; Since l wasn't a flag push r back
+    (while (consp cmd-opts)
+      (let ((l (pop cmd-opts))
+	    (r (pop cmd-opts)))
+	(cond ((and (symbolp l) (symbolp r))) ; Consecutive flags, skipping...
+	      ((symbolp l)
+	       (push (funcall (plist-get handle-flag-values l) r) opts)
+	       (push l opts))
+	      (t (push r cmd-opts))))) ; Since l wasn't a flag push r back
     opts))
 
 (defun days-in-seconds (days)
