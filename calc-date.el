@@ -14,8 +14,7 @@
 (defun parse-command-line-arguments ()
   "Return a PLIST from the script's command line arguments"
   (let ((cmd-opts (mapcar (lambda (opt)
-			    (cond ((plist-get script-flags opt 'equal))
-				  (t opt)))
+			    (or (plist-get script-flags opt 'equal) opt))
 			  command-line-args-left))
 	(opts nil)
 	l r) ; left: flag, right: value
