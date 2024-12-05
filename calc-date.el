@@ -1,6 +1,6 @@
 #!/usr/bin/emacs -x
 
-(load (expand-file-name "~/Documents/Repos/random-lisp-scripts/calc-date-lib.el") nil t t)
+(load (concat (file-name-directory load-file-name) "calc-date-lib.el") nil t t)
 
 (let* ((options (parse-command-line-arguments))
        (days (plist-get options :add-days))
