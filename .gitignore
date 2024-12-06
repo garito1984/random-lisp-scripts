@@ -1,4 +1,6 @@
-# Emacs byte-compiled files
+# Elisp byte-compiled files
 *.elc
+
+# Emacs backup files...
 *~
 *#
