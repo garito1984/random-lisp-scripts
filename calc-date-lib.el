@@ -1,12 +1,12 @@
 ;;;
 ;;; Declarations
 ;;;
-(setq script-flags '("--add-days"  :add-days
-		     "--base-date" :base-date))
+(defconst script-flags '("--add-days"  :add-days
+			 "--base-date" :base-date))
 
-(setq handle-flag-values
-      '(:add-days  (lambda (val) (if val (string-to-number val)))
-	:base-date (lambda (val) (if val (date-to-time val)))))
+(defconst handle-flag-values
+  '(:add-days  (lambda (val) (if val (string-to-number val)))
+    :base-date (lambda (val) (if val (date-to-time val)))))
 
 (defun parse-command-line-arguments (&optional params)
   "Return a PLIST from the script's command line arguments"
