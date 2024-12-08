@@ -27,9 +27,9 @@
 
 (defun days-in-seconds (days)
   "Return a DAYS number of seconds"
-  (let ((seconds 60)  ;; 1 minute
-	(minutes 60)  ;; 1 hour
-	(hours   24)) ;; 1 day
+  (let ((seconds 60)  ; 1 minute
+	(minutes 60)  ; 1 hour
+	(hours   24)) ; 1 day
     (* seconds minutes hours days)))
 
 (defun calc-date-message (past-date days)
