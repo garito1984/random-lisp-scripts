@@ -22,7 +22,7 @@
     ;; Update buffer
     (animation-update (car l))
     ;; Sleep and redisplay the screen
-    (sleep-for 1)
+    (sleep-for 0.5)
     (sit-for 0)
     ;; Continue with the animation
     (animation-progress (cdr l) (- n 1))))
