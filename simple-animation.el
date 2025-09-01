@@ -38,5 +38,4 @@
 ;;
 ;; Call the actual animation function
 ;;
-(do-animation-progress 20 3)
-
+(make-thread (lambda () (do-animation-progress 20 3)) "thread-simple-animation")
