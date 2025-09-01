@@ -38,4 +38,4 @@
 ;;
 ;; Call the actual animation function
 ;;
-(make-thread (lambda () (do-animation-progress 10000 3)) "running-simple-animation")
+(make-thread (lambda () (do-animation-progress 20 3)) "running-simple-animation")
